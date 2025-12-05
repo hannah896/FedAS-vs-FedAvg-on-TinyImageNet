@@ -20,3 +20,6 @@ Personalized Federated Learning (PFL) is primarily designed to provide customize
 
 ## Run
 Follow instructions.md to run.
+
+# FedAS-vs-FedAvg-on-TinyImageNet
+사물인터넷 2분반 4팀  FedAS 최종 구현물
