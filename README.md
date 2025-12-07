@@ -117,3 +117,216 @@ FedPer 의 결과물을 담고 있음.
 
 - 글로벌 환경 및 다양한 데이터셋에서도 안정적 성능 확인
 - FedAvg보다 더 높은 Robustness 확보
+
+# FedAS vs FedAvg on TinyImageNet – 설치 및 실행 메뉴얼
+
+---
+
+## 1. 환경 설정
+
+---
+
+### 1.1 Repository 클론
+
+```bash
+git clone https://github.com/<your-id>/FedAS-vs-FedAvg-on-TinyImageNet.git
+cd FedAS-vs-FedAvg-on-TinyImageNet
+```
+
+### 1.2 Python 환경 생성 (권장)
+
+```bash
+python3 -m venv fedasenv
+source fedasenv/bin/activate
+```
+
+### 1.3 필수 라이브러리 설치
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+※ 필요한 기본 라이브러리 (참고) + 더 있을수도 있음!
+
+```
+numpy
+torch
+torchvision
+tqdm
+matplotlib
+h5py
+pillow
+```
+
+---
+
+## 2. TinyImageNet 데이터 준비
+
+---
+
+### 2.1 TinyImageNet-200 다운로드
+
+---
+
+TinyImageNet 공식 다운로드 페이지:
+
+https://tiny-imagenet.herokuapp.com/
+
+압축을 풀고 아래 구조로 배치:
+
+```
+~/data/tiny-imagenet-200/
+    train/
+    val/
+    wnids.txt
+    words.txt
+```
+
+---
+
+## 3. TinyImageNet → FedAS 학습용 데이터 변환
+
+---
+
+### 3.1 변환 스크립트 실행
+
+```bash
+cd dataset
+python3 tiny2cifar.py
+```
+
+### 3.2 변환 후 생성되는 구조
+
+```
+dataset/tiny_processed/
+   client_0.h5
+   client_1.h5
+   ...
+   client_19.h5
+   stat.json
+```
+
+---
+
+각 client_x.h5 내부 구조
+
+```
+x : uint8 이미지 (N, 32, 32, 3)
+y : 레이블 (N,)
+```
+
+총 20개의 클라이언트 데이터가 생성되며 Dirichlet(α=0.3) 기반 non-IID 분포로 나뉨.
+
+---
+
+## 4. FedAS / FedAvg 학습 실행
+
+---
+
+### 4.1 FedAS 실행
+
+```bash
+cd system
+python3 main.py \
+    -did 0 \
+    -data TinyCifar \
+    -nb 200 \
+    -m cnn \
+    -lbs 16 \
+    -gr 40 \
+    -ls 5 \
+    -algo FedAS \
+    -jr 0.1 \
+    -nc 20
+```
+
+---
+
+### 4.2 FedAvg 실행
+
+```bash
+python3 main.py \
+    -did 0 \
+    -data TinyCifar \
+    -nb 200 \
+    -m cnn \
+    -lbs 16 \
+    -gr 40 \
+    -ls 5 \
+    -algo FedAvg \
+    -jr 0.1 \
+    -nc 20
+```
+
+---
+
+## 5. 결과 저장 위치
+
+---
+
+**학습이 끝나면 아래 폴더에 결과가 자동 저장됨**
+
+```
+results/
+   TinyCifar_FedAS_test_0.h5
+   TinyCifar_FedAvg_test_0.h5
+   TinyCifar_FedPer_test_0.h5 (선택)
+```
+
+---
+
+**각 파일에 포함되는 값**
+
+- **round_test_acc**
+- **round_train_acc**
+- **round_loss**
+
+---
+
+## 6. 비교 그래프 생성
+
+---
+
+### 6.1 비교 플롯 스크립트 실행
+
+```bash
+cd results
+python3 compare_TinyCifar_test.py
+```
+
+---
+
+### 6.2 출력물
+
+```
+tinycifar_fedavg_vs_fedas.png
+```
+
+---
+
+**그래프 내용**
+
+- FedAS vs FedAvg accuracy 곡선 비교
+- 40 rounds 기준 global test accuracy 변화
+
+---
+
+## 7. 전체 실행 순서 요약
+
+---
+
+1. TinyImageNet 다운로드
+2.  `tiny2cifar.py` 실행 → 클라이언트 데이터 생성
+3.  `main.py` 실행 → FedAS / FedAvg 학습
+4. `results/` 폴더에서 결과 확인
+5. `compare_TinyCifar_test.py` 로 그래프 출력
+
+---
+
+# 요약
+
+---
+
+본 구현물에서는 TinyImageNet-200 데이터를 CIFAR 형태로 변환하여 총 20개 클라이언트에 Dirichlet 분포 기반으로 분산시켰고, FedAS 및 FedAvg 알고리즘을 동일한 조건에서 학습 후 정확도를 비교하였다. 모든 실험은 재현성을 위해 데이터 변환 스크립트, 학습 스크립트, 실험 결과를 자동 처리하는 코드와 그래프 생성 코드를 함께 제공하였다.
