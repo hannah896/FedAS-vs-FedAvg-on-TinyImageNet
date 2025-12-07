@@ -1,5 +1,6 @@
 # FedAS: 개인화 연합 학습의 불일치 문제 해결
 ### 사물인터넷 Lab2 논문 구현 수행_팀4
+### FedAS-vs-FedAvg-on-TinyImageNet
  ⦁  [발표자료](https://github.com/hannah896/FedAS-vs-FedAvg-on-TinyImageNet/blob/main/%5B%EC%82%AC%EB%AC%BC%EC%9D%B8%ED%84%B0%EB%84%B7-%EC%98%A4%ED%9B%84%EB%B0%98%5D_%ED%8C%804_%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B82_%EB%B0%9C%ED%91%9C%EC%9E%90%EB%A3%8C.pptx)
  
  ⦁  [FedAS 논문](https://openaccess.thecvf.com/content/CVPR2024/papers/Yang_FedAS_Bridging_Inconsistency_in_Personalized_Federated_Learning_CVPR_2024_paper.pdf?utm_source=chatgpt.com)
